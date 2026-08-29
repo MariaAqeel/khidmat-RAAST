@@ -1,0 +1,18 @@
+# Local Postgres for development. Run: docker compose up -d
+# Then point backend/.env DATABASE_URL at localhost:5432 as shown in .env.example.
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rast_user
+      POSTGRES_PASSWORD: rast_password
+      POSTGRES_DB: rast_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - rast_pgdata:/var/lib/postgresql/data
+
+volumes:
+  rast_pgdata:
