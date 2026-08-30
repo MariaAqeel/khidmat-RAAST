@@ -142,6 +142,15 @@ const MEETINGS = [
   { id: "m1", studentId: "s1", date: "2026-09-04", purpose: "Quarterly progress review", attendees: "Sana Ahmed (parent), Marukh, Dr. Atiya, Ayesha Imran", status: "Scheduled" },
 ];
 
+// Track which students have had Informal Assessment Checklist completed (student ID → true/false)
+const ASSESSMENT_STATUS = {
+  s1: true,  // Abdul Ahad - completed
+  s2: false, // Mohsin Ali Khan - pending
+  s3: false, // Hamdan Ahmed - pending
+  s4: true,  // Rayyan Yosuf - completed
+  s5: false, // Haris Ali - pending
+};
+
 const NOTIFICATIONS = {
   therapist: [
     { text: "You have 2 pending daily coverage reports.", time: "1h ago" },
@@ -247,6 +256,116 @@ const DAILY_REPORT_FORMS = {
       { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
     ]
   }
+};
+
+/* Informal Assessment Checklist Form Configuration */
+const INFORMAL_ASSESSMENT_FORM = {
+  title: "Informal Assessment Checklist",
+  sections: [
+    {
+      name: "basic",
+      label: "Basic Information",
+      fields: [
+        { name: "studentName", label: "Student's Name", type: "select", required: true },
+        { name: "date", label: "Date", type: "date", required: true },
+        { name: "time", label: "Time", type: "time", required: true },
+      ]
+    },
+    {
+      name: "formalAssessment",
+      label: "Formal Assessment",
+      fields: [
+        { name: "hasFormalAssessment", label: "Has the formal assessment been made?", type: "yesno", required: true },
+        { name: "diagnosis", label: "If Yes, What is the diagnosis?", type: "textarea", required: false, condition: (form) => form.hasFormalAssessment === "Yes" },
+      ]
+    },
+    {
+      name: "behaviour",
+      label: "Behaviour",
+      fields: [
+        { name: "sittingTolerance", label: "Sitting Tolerance (Record time of sitting in mins)", type: "number", required: true },
+        { name: "hyperactive", label: "Hyperactive", type: "yesno", required: true },
+        { name: "stubbornness", label: "Stubbornness (Follow Instructions)", type: "yesno", required: true },
+        { name: "stubbornnessReason", label: "If No, Specify?", type: "multiselect", options: ["Not following commands", "Distracted"], required: false, condition: (form) => form.stubbornness === "No" },
+        { name: "selfStimulatory", label: "Self Stimulatory Behaviour?", type: "yesno", required: true },
+        { name: "selfStimType", label: "If Yes, Specify?", type: "multiselect", options: ["Self-talking", "Hand clapping", "Spinning", "Shouting", "Crying", "Self-hitting", "Head banging"], required: false, condition: (form) => form.selfStimulatory === "Yes" },
+        { name: "behaviourObservations", label: "Observations?", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "fineMotor",
+      label: "Fine Motor Skills",
+      fields: [
+        { name: "pencilGripping", label: "Pencil Gripping", type: "yesno", required: true },
+        { name: "colouringWithinLines", label: "Colouring within lines?", type: "yesno", required: true },
+        { name: "verticalHorizontalLines", label: "Drawing vertical and horizontal lines", type: "yesno", required: true },
+        { name: "pickingSmallObjects", label: "Picking up small objects", type: "yesno", required: true },
+        { name: "openingClosingLocks", label: "Opening and closing locks", type: "yesno", required: true },
+        { name: "fineMotorObservations", label: "Observation", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "grossMotor",
+      label: "Gross Motor Skills",
+      fields: [
+        { name: "catchingThrowing", label: "Catching and throwing a ball", type: "yesno", required: true },
+        { name: "walkingInLine", label: "Walking in line", type: "yesno", required: true },
+        { name: "controlRunningWalking", label: "Control while running and walking", type: "yesno", required: true },
+        { name: "jumpingInOutCircle", label: "Jumping in and out of circle", type: "yesno", required: true },
+        { name: "coordinatedMuscleControl", label: "Coordinated muscle control", type: "yesno", required: true },
+        { name: "grossMotorObservations", label: "Observation", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "speech",
+      label: "Speech",
+      fields: [
+        { name: "respondsToName", label: "Receptive Language - Responds to name?", type: "yesno", required: true },
+        { name: "recogniseObjects", label: "Receptive Language - Recognise objects?", type: "yesno", required: true },
+        { name: "expressEmotions", label: "Expressive Language - Can express feelings?", type: "yesno", required: true },
+        { name: "demandObjects", label: "Expressive Language - Can demand for objects?", type: "yesno", required: true },
+        { name: "speechObservations", label: "Observations?", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "remedial",
+      label: "Remedial Therapy",
+      fields: [
+        { name: "matchingSameObjects", label: "Matching same objects?", type: "yesno", required: true },
+        { name: "comparingSorting", label: "Comparing and sorting objects by size (big/small, long/short)", type: "yesno", required: true },
+        { name: "countingFingers", label: "Counting on fingers", type: "yesno", required: true },
+        { name: "identifyingNaming", label: "Identifying and naming different objects", type: "yesno", required: true },
+        { name: "remedialObservations", label: "Observations", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "emotional",
+      label: "Emotional and Social Skills",
+      fields: [
+        { name: "expressEmotionsAppropriately", label: "Express emotions appropriately", type: "yesno", required: true },
+        { name: "interactsWithPeers", label: "Interacts with peers appropriately", type: "yesno", required: true },
+        { name: "handlesTransitions", label: "Handles transitions or change in routine", type: "yesno", required: true },
+        { name: "emotionalObservations", label: "Observations", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "progressCheck",
+      label: "Progress Check",
+      fields: [
+        { name: "isFirstAssessment", label: "Is this the first assessment at RAST Schooling System?", type: "yesno", required: true },
+        { name: "lastAssessmentDate", label: "If No, then specify date of last assessment", type: "date", required: false, condition: (form) => form.isFirstAssessment === "No" },
+        { name: "progressLevel", label: "Specify the level of progress", type: "select", options: ["Improvement", "No Change", "Regression"], required: false, condition: (form) => form.isFirstAssessment === "No" },
+        { name: "progressObservations", label: "Observations", type: "textarea", required: false },
+      ]
+    },
+    {
+      name: "additional",
+      label: "Additional Information",
+      fields: [
+        { name: "additionalNotes", label: "Additional Notes if Any?", type: "textarea", required: false },
+      ]
+    }
+  ]
 };
 
 /* ---------------------------------------------------------
@@ -606,6 +725,270 @@ const StudentProfile = ({ student, onBack, onOpenReport }) => {
   const goals = GOALS.filter((g) => g.studentId === student.id);
   const sessions = SESSIONS.filter((s) => s.studentId === student.id);
 
+};
+
+/* ---------------------------------------------------------
+   INFORMAL ASSESSMENT CHECKLIST FORM
+------------------------------------------------- */
+const InformalAssessmentForm = ({ student, onClose }) => {
+  const [selectedStudent, setSelectedStudent] = useState(student?.id || null);
+  const [currentSection, setCurrentSection] = useState(0);
+  const [form, setForm] = useState({});
+  const [saved, setSaved] = useState(false);
+  const sections = INFORMAL_ASSESSMENT_FORM.sections;
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const studentObj = STUDENTS.find((s) => s.id === selectedStudent);
+  const isStudentReadOnly = student !== null;
+
+  const renderField = (field) => {
+    if (field.condition && !field.condition(form)) return null;
+    const value = form[field.name] || "";
+    const baseStyle = { width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, fontFamily: "inherit" };
+
+    if (field.type === "select") {
+      if (field.name === "studentName") {
+        return (
+          <select value={value} onChange={(e) => set(field.name, e.target.value)} disabled={isStudentReadOnly} style={{ ...baseStyle, opacity: isStudentReadOnly ? 0.7 : 1 }}>
+            <option value="">Select student</option>
+            {STUDENTS.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        );
+      }
+      return (
+        <select value={value} onChange={(e) => set(field.name, e.target.value)} style={{ ...baseStyle, cursor: "pointer" }}>
+          <option value="">Select...</option>
+          {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+        </select>
+      );
+    }
+
+    if (field.type === "yesno") {
+      return (
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => set(field.name, "Yes")} style={{
+            flex: 1, padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+            border: `1px solid ${value === "Yes" ? T.teal : T.line}`,
+            background: value === "Yes" ? T.teal : "white",
+            color: value === "Yes" ? "white" : T.ink, fontWeight: 600, fontSize: 12
+          }}>Yes</button>
+          <button onClick={() => set(field.name, "No")} style={{
+            flex: 1, padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+            border: `1px solid ${value === "No" ? T.teal : T.line}`,
+            background: value === "No" ? T.teal : "white",
+            color: value === "No" ? "white" : T.ink, fontWeight: 600, fontSize: 12
+          }}>No</button>
+        </div>
+      );
+    }
+
+    if (field.type === "multiselect") {
+      const selected = Array.isArray(value) ? value : [];
+      return (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {field.options?.map((opt) => (
+            <button key={opt} onClick={() => {
+              const updated = selected.includes(opt) ? selected.filter((i) => i !== opt) : [...selected, opt];
+              set(field.name, updated);
+            }} style={{
+              padding: "6px 12px", borderRadius: 6, cursor: "pointer", fontSize: 12,
+              border: `1px solid ${selected.includes(opt) ? T.teal : T.line}`,
+              background: selected.includes(opt) ? T.teal : "white",
+              color: selected.includes(opt) ? "white" : T.ink, fontWeight: 500
+            }}>{opt}</button>
+          ))}
+        </div>
+      );
+    }
+
+    if (field.type === "date" || field.type === "time") {
+      return <input type={field.type} value={value} onChange={(e) => set(field.name, e.target.value)} style={baseStyle} />;
+    }
+
+    if (field.type === "number") {
+      return <input type="number" value={value} onChange={(e) => set(field.name, e.target.value)} style={baseStyle} />;
+    }
+
+    if (field.type === "textarea") {
+      return <textarea value={value} onChange={(e) => set(field.name, e.target.value)} rows={3} style={{ ...baseStyle, resize: "vertical" }} />;
+    }
+
+    return <input type="text" value={value} onChange={(e) => set(field.name, e.target.value)} style={baseStyle} />;
+  };
+
+  const section = sections[currentSection];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(21,36,32,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
+      <div className="rast-card rast-fade-in" style={{ width: 680, maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ padding: "18px 22px", borderBottom: `1px solid ${T.line}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5 }}>Informal Assessment Checklist</div>
+            <div className="rast-serif" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>{studentObj?.name || "Select Student"}</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: T.inkFaint }}><X size={20} /></button>
+        </div>
+
+        <div style={{ display: "flex", gap: 4, padding: "12px 22px", borderBottom: `1px solid ${T.line}`, overflowX: "auto" }} className="rast-scroll">
+          {sections.map((s, i) => (
+            <button key={s.name} onClick={() => setCurrentSection(i)} style={{
+              padding: "8px 12px", borderRadius: 6, cursor: "pointer", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap",
+              border: `1px solid ${i === currentSection ? T.teal : T.line}`,
+              background: i === currentSection ? T.teal : "white",
+              color: i === currentSection ? "white" : T.ink,
+            }}>{s.label}</button>
+          ))}
+        </div>
+
+        <div className="rast-scroll" style={{ padding: 22, overflowY: "auto", flex: 1 }}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Student *</label>
+            <select value={selectedStudent} onChange={(e) => setSelectedStudent(e.target.value)} disabled={isStudentReadOnly} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, opacity: isStudentReadOnly ? 0.7 : 1 }}>
+              <option value="">Select a student</option>
+              {STUDENTS.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {section.fields.map((field) => (
+              <div key={field.name}>
+                <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>
+                  {field.label}
+                  {field.required && <span style={{ color: T.coral }}> *</span>}
+                </label>
+                {renderField(field)}
+              </div>
+            ))}
+          </div>
+
+          {saved && (
+            <div style={{ marginTop: 16, padding: 12, background: T.sageSoft, borderRadius: 8, display: "flex", alignItems: "center", gap: 8, color: T.sage, fontSize: 13, fontWeight: 600 }}>
+              <CheckCircle2 size={16} /> Assessment completed successfully!
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${T.line}`, display: "flex", justifyContent: "space-between", gap: 8 }}>
+          <button onClick={() => setCurrentSection(Math.max(0, currentSection - 1))} disabled={currentSection === 0} style={{
+            padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: currentSection === 0 ? "default" : "pointer",
+            opacity: currentSection === 0 ? 0.4 : 1
+          }}>← Previous</button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={onClose} className="rast-btn-ghost" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+            {currentSection < sections.length - 1 ? (
+              <button onClick={() => setCurrentSection(currentSection + 1)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Next →</button>
+            ) : (
+              <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Submit</button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ---------------------------------------------------------
+   ADD STUDENT FORM (Admin)
+------------------------------------------------- */
+const AddStudentForm = ({ onClose }) => {
+  const [form, setForm] = useState({
+    name: "", father: "", age: "", dob: "", gender: "", className: "", shift: "", program: "", parent: "", phone: "", diagnosis: "", allergies: "",
+  });
+  const [saved, setSaved] = useState(false);
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const baseStyle = { width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, fontFamily: "inherit" };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(21,36,32,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
+      <div className="rast-card rast-fade-in" style={{ width: 620, maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ padding: "18px 22px", borderBottom: `1px solid ${T.line}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.sage, textTransform: "uppercase", letterSpacing: 0.5 }}>Add New Student</div>
+            <div className="rast-serif" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>Student Enrollment</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: T.inkFaint }}><X size={20} /></button>
+        </div>
+
+        <div className="rast-scroll" style={{ padding: 22, overflowY: "auto", flex: 1 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Student Name *</label>
+              <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Father's Name</label>
+              <input type="text" value={form.father} onChange={(e) => set("father", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Date of Birth</label>
+              <input type="date" value={form.dob} onChange={(e) => set("dob", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Age</label>
+              <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Gender</label>
+              <select value={form.gender} onChange={(e) => set("gender", e.target.value)} style={{ ...baseStyle, cursor: "pointer" }}>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Shift</label>
+              <select value={form.shift} onChange={(e) => set("shift", e.target.value)} style={{ ...baseStyle, cursor: "pointer" }}>
+                <option value="">Select</option>
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Program</label>
+              <input type="text" value={form.program} onChange={(e) => set("program", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Class Name</label>
+              <input type="text" value={form.className} onChange={(e) => set("className", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Parent/Guardian Name</label>
+              <input type="text" value={form.parent} onChange={(e) => set("parent", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Phone Number</label>
+              <input type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Diagnosis</label>
+              <input type="text" value={form.diagnosis} onChange={(e) => set("diagnosis", e.target.value)} style={baseStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Allergies</label>
+              <input type="text" value={form.allergies} onChange={(e) => set("allergies", e.target.value)} style={baseStyle} />
+            </div>
+          </div>
+
+          {saved && (
+            <div style={{ padding: 12, background: T.sageSoft, borderRadius: 8, display: "flex", alignItems: "center", gap: 8, color: T.sage, fontSize: 13, fontWeight: 600 }}>
+              <CheckCircle2 size={16} /> New student added! ⚠️ Therapist must complete Informal Assessment.
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${T.line}`, display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <button onClick={onClose} className="rast-btn-ghost" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+          <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Add Student</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ---------------------------------------------------------
+   STUDENT PROFILE (used by therapist + admin views)
+
   return (
     <div className="rast-fade-in">
       <button onClick={onBack} style={{ background: "none", border: "none", color: T.inkFaint, fontSize: 13, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", marginBottom: 16 }}>
@@ -790,13 +1173,32 @@ const StudentProfile = ({ student, onBack, onOpenReport }) => {
 /* ---------------------------------------------------------
    THERAPIST VIEWS
 --------------------------------------------------------- */
-const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab }) => {
+const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab, onShowAssessment }) => {
   const myStudents = STUDENTS.filter((s) => THERAPISTS[0].students.includes(s.id));
   const today = SESSIONS.filter((s) => s.date === "2026-08-28");
+  const pendingAssessments = myStudents.filter((s) => ASSESSMENT_STATUS[s.id] === false);
+
   return (
     <div className="rast-fade-in">
       <div className="rast-serif" style={{ fontSize: 24, fontWeight: 600, marginBottom: 4 }}>Good afternoon, Marukh</div>
       <div style={{ fontSize: 13.5, color: T.inkFaint, marginBottom: 24 }}>Here's what's happening with your students today.</div>
+
+      {pendingAssessments.length > 0 && (
+        <div className="rast-card" style={{ padding: 14, marginBottom: 20, borderLeft: `4px solid ${T.gold}`, background: T.goldSoft, display: "flex", alignItems: "center", gap: 12 }}>
+          <AlertCircle size={18} color={T.gold} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
+              {pendingAssessments.length} student{pendingAssessments.length === 1 ? '' : 's'} need{pendingAssessments.length === 1 ? 's' : ''} Informal Assessment
+            </div>
+            <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
+              {pendingAssessments.map(s => s.name).join(", ")}
+            </div>
+          </div>
+          <button onClick={onShowAssessment} className="rast-btn-primary" style={{ padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+            Start now
+          </button>
+        </div>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
         {[
@@ -1136,11 +1538,11 @@ const AdminDashboard = () => {
   );
 };
 
-const AdminStudents = ({ onOpenStudent }) => (
+const AdminStudents = ({ onOpenStudent, onShowAddStudent }) => (
   <div className="rast-fade-in">
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
       <div className="rast-serif" style={{ fontSize: 22, fontWeight: 600 }}>All students</div>
-      <button className="rast-btn-primary" style={{ padding: "9px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+      <button onClick={() => onShowAddStudent(true)} className="rast-btn-primary" style={{ padding: "9px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
         <Plus size={14} style={{ verticalAlign: -2, marginRight: 4 }} />Add student
       </button>
     </div>
@@ -1184,6 +1586,8 @@ export default function RastApp() {
   const [tab, setTab] = useState("dashboard");
   const [openStudent, setOpenStudent] = useState(null);
   const [showReport, setShowReport] = useState(false);
+  const [showAddStudent, setShowAddStudent] = useState(false);
+  const [showAssessmentForm, setShowAssessmentForm] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
 
   if (!role) return <div className="rast-root"><GlobalStyle /><RoleSelect onSelect={(r) => setRole(r)} /></div>;
@@ -1199,7 +1603,7 @@ export default function RastApp() {
       return <StudentProfile student={openStudent} onBack={() => setOpenStudent(null)} onOpenReport={() => setShowReport(true)} />;
     }
     if (role === "therapist") {
-      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} onShowReport={() => setShowReport(true)} onChangeTab={setTab} />;
+      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} onShowReport={() => setShowReport(true)} onChangeTab={setTab} onShowAssessment={() => setShowAssessmentForm(true)} />;
       if (tab === "students") return <TherapistStudents onOpenStudent={setOpenStudent} />;
       if (tab === "goals") return (
         <div className="rast-fade-in">
@@ -1260,7 +1664,7 @@ export default function RastApp() {
     }
     if (role === "admin") {
       if (tab === "dashboard") return <AdminDashboard />;
-      if (tab === "students") return <AdminStudents onOpenStudent={setOpenStudent} />;
+      if (tab === "students") return <AdminStudents onOpenStudent={setOpenStudent} onShowAddStudent={setShowAddStudent} />;
       if (tab === "staff") return (
         <div className="rast-fade-in">
           <div className="rast-serif" style={{ fontSize: 22, fontWeight: 600, marginBottom: 18 }}>Therapists & staff</div>
@@ -1344,6 +1748,14 @@ export default function RastApp() {
       {showReport && (
         <DailyReportForm student={openStudent} onClose={() => setShowReport(false)} />
       )}
+
+        {showAddStudent && (
+          <AddStudentForm onClose={() => setShowAddStudent(false)} />
+        )}
+
+          {showAssessmentForm && (
+            <InformalAssessmentForm student={null} onClose={() => setShowAssessmentForm(false)} />
+          )}
     </div>
   );
 }
