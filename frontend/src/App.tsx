@@ -66,7 +66,7 @@ const THERAPISTS = [
   { id: "t4", name: "Bilal Farooq", dept: "Remedial", role: "Remedial Therapist", students: ["s1", "s2"] },
 ];
 
-const STUDENTS = [
+let STUDENTS = [
   {
     id: "s1", studentId: "23/24-01", name: "Abdul Ahad", father: "Naveed Ahmed", age: 5, dob: "2021-03-14",
     gender: "Male", program: "School Readiness Program", className: "R.T (Afternoon)", shift: "Afternoon",
@@ -143,7 +143,7 @@ const MEETINGS = [
 ];
 
 // Track which students have had Informal Assessment Checklist completed (student ID → true/false)
-const ASSESSMENT_STATUS = {
+let ASSESSMENT_STATUS = {
   s1: true,  // Abdul Ahad - completed
   s2: false, // Mohsin Ali Khan - pending
   s3: false, // Hamdan Ahmed - pending
@@ -276,7 +276,7 @@ const INFORMAL_ASSESSMENT_FORM = {
       label: "Formal Assessment",
       fields: [
         { name: "hasFormalAssessment", label: "Has the formal assessment been made?", type: "yesno", required: true },
-        { name: "diagnosis", label: "If Yes, What is the diagnosis?", type: "textarea", required: false, condition: (form) => form.hasFormalAssessment === "Yes" },
+        { name: "diagnosis", label: "If Yes, What is the diagnosis?", type: "textarea", required: false, condition: (form: Record<string, any>) => form.hasFormalAssessment === "Yes" },
       ]
     },
     {
@@ -286,9 +286,9 @@ const INFORMAL_ASSESSMENT_FORM = {
         { name: "sittingTolerance", label: "Sitting Tolerance (Record time of sitting in mins)", type: "number", required: true },
         { name: "hyperactive", label: "Hyperactive", type: "yesno", required: true },
         { name: "stubbornness", label: "Stubbornness (Follow Instructions)", type: "yesno", required: true },
-        { name: "stubbornnessReason", label: "If No, Specify?", type: "multiselect", options: ["Not following commands", "Distracted"], required: false, condition: (form) => form.stubbornness === "No" },
+        { name: "stubbornnessReason", label: "If No, Specify?", type: "multiselect", options: ["Not following commands", "Distracted"], required: false, condition: (form: Record<string, any>) => form.stubbornness === "No" },
         { name: "selfStimulatory", label: "Self Stimulatory Behaviour?", type: "yesno", required: true },
-        { name: "selfStimType", label: "If Yes, Specify?", type: "multiselect", options: ["Self-talking", "Hand clapping", "Spinning", "Shouting", "Crying", "Self-hitting", "Head banging"], required: false, condition: (form) => form.selfStimulatory === "Yes" },
+        { name: "selfStimType", label: "If Yes, Specify?", type: "multiselect", options: ["Self-talking", "Hand clapping", "Spinning", "Shouting", "Crying", "Self-hitting", "Head banging"], required: false, condition: (form: Record<string, any>) => form.selfStimulatory === "Yes" },
         { name: "behaviourObservations", label: "Observations?", type: "textarea", required: false },
       ]
     },
@@ -353,8 +353,8 @@ const INFORMAL_ASSESSMENT_FORM = {
       label: "Progress Check",
       fields: [
         { name: "isFirstAssessment", label: "Is this the first assessment at RAST Schooling System?", type: "yesno", required: true },
-        { name: "lastAssessmentDate", label: "If No, then specify date of last assessment", type: "date", required: false, condition: (form) => form.isFirstAssessment === "No" },
-        { name: "progressLevel", label: "Specify the level of progress", type: "select", options: ["Improvement", "No Change", "Regression"], required: false, condition: (form) => form.isFirstAssessment === "No" },
+        { name: "lastAssessmentDate", label: "If No, then specify date of last assessment", type: "date", required: false, condition: (form: Record<string, any>) => form.isFirstAssessment === "No" },
+        { name: "progressLevel", label: "Specify the level of progress", type: "select", options: ["Improvement", "No Change", "Regression"], required: false, condition: (form: Record<string, any>) => form.isFirstAssessment === "No" },
         { name: "progressObservations", label: "Observations", type: "textarea", required: false },
       ]
     },
@@ -730,7 +730,7 @@ const StudentProfile = ({ student, onBack, onOpenReport }) => {
 /* ---------------------------------------------------------
    INFORMAL ASSESSMENT CHECKLIST FORM
 ------------------------------------------------- */
-const InformalAssessmentForm = ({ student, onClose }) => {
+const InformalAssessmentForm = ({ student, onClose, onSubmit }) => {
   const [selectedStudent, setSelectedStudent] = useState(student?.id || null);
   const [currentSection, setCurrentSection] = useState(0);
   const [form, setForm] = useState({});
@@ -739,7 +739,7 @@ const InformalAssessmentForm = ({ student, onClose }) => {
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const studentObj = STUDENTS.find((s) => s.id === selectedStudent);
-  const isStudentReadOnly = student !== null;
+  const isStudentReadOnly = Boolean(student);
 
   const renderField = (field) => {
     if (field.condition && !field.condition(form)) return null;
@@ -878,7 +878,7 @@ const InformalAssessmentForm = ({ student, onClose }) => {
             {currentSection < sections.length - 1 ? (
               <button onClick={() => setCurrentSection(currentSection + 1)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Next →</button>
             ) : (
-              <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Submit</button>
+              <button onClick={() => { onSubmit(selectedStudent); setSaved(true); }} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Submit</button>
             )}
           </div>
         </div>
@@ -890,7 +890,7 @@ const InformalAssessmentForm = ({ student, onClose }) => {
 /* ---------------------------------------------------------
    ADD STUDENT FORM (Admin)
 ------------------------------------------------- */
-const AddStudentForm = ({ onClose }) => {
+const AddStudentForm = ({ onClose, onSubmit }) => {
   const [form, setForm] = useState({
     name: "", father: "", age: "", dob: "", gender: "", className: "", shift: "", program: "", parent: "", phone: "", diagnosis: "", allergies: "",
   });
@@ -979,7 +979,7 @@ const AddStudentForm = ({ onClose }) => {
 
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${T.line}`, display: "flex", justifyContent: "flex-end", gap: 8 }}>
           <button onClick={onClose} className="rast-btn-ghost" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-          <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Add Student</button>
+          <button onClick={() => { onSubmit(form); setSaved(true); }} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Add Student</button>
         </div>
       </div>
     </div>
@@ -1194,7 +1194,7 @@ const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab, onShowAs
               {pendingAssessments.map(s => s.name).join(", ")}
             </div>
           </div>
-          <button onClick={onShowAssessment} className="rast-btn-primary" style={{ padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+          <button onClick={() => onShowAssessment(pendingAssessments[0])} className="rast-btn-primary" style={{ padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
             Start now
           </button>
         </div>
@@ -1588,6 +1588,8 @@ export default function RastApp() {
   const [showReport, setShowReport] = useState(false);
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [showAssessmentForm, setShowAssessmentForm] = useState(false);
+  const [assessmentStudent, setAssessmentStudent] = useState(null);
+  const [, refreshData] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
 
   if (!role) return <div className="rast-root"><GlobalStyle /><RoleSelect onSelect={(r) => setRole(r)} /></div>;
@@ -1597,13 +1599,30 @@ export default function RastApp() {
 
   const goHome = () => { setRole(null); setTab("dashboard"); setOpenStudent(null); };
   const changeTab = (id) => { setTab(id); setOpenStudent(null); setMobileNav(false); };
+  const addStudent = (form) => {
+    const id = `s${STUDENTS.length + 1}`;
+    STUDENTS = [...STUDENTS, {
+      ...form, id, studentId: `26/27-${String(STUDENTS.length + 1).padStart(2, "0")}`,
+      age: Number(form.age) || 0, status: "Active", admission: new Date().toISOString().slice(0, 10),
+      emergencyContact: form.phone, departments: [], progress: {}, photo: form.name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
+    }];
+    ASSESSMENT_STATUS = { ...ASSESSMENT_STATUS, [id]: false };
+    refreshData((value) => value + 1);
+    setShowAddStudent(false);
+  };
+  const completeAssessment = (studentId) => {
+    if (!studentId) return;
+    ASSESSMENT_STATUS = { ...ASSESSMENT_STATUS, [studentId]: true };
+    refreshData((value) => value + 1);
+    setShowAssessmentForm(false);
+  };
 
   const renderContent = () => {
     if (openStudent) {
       return <StudentProfile student={openStudent} onBack={() => setOpenStudent(null)} onOpenReport={() => setShowReport(true)} />;
     }
     if (role === "therapist") {
-      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} onShowReport={() => setShowReport(true)} onChangeTab={setTab} onShowAssessment={() => setShowAssessmentForm(true)} />;
+      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} onShowReport={() => setShowReport(true)} onChangeTab={setTab} onShowAssessment={(student) => { setAssessmentStudent(student); setShowAssessmentForm(true); }} />;
       if (tab === "students") return <TherapistStudents onOpenStudent={setOpenStudent} />;
       if (tab === "goals") return (
         <div className="rast-fade-in">
@@ -1750,11 +1769,11 @@ export default function RastApp() {
       )}
 
         {showAddStudent && (
-          <AddStudentForm onClose={() => setShowAddStudent(false)} />
+          <AddStudentForm onClose={() => setShowAddStudent(false)} onSubmit={addStudent} />
         )}
 
           {showAssessmentForm && (
-            <InformalAssessmentForm student={null} onClose={() => setShowAssessmentForm(false)} />
+            <InformalAssessmentForm student={assessmentStudent} onClose={() => setShowAssessmentForm(false)} onSubmit={completeAssessment} />
           )}
     </div>
   );
