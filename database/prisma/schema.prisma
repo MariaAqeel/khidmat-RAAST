@@ -1,0 +1,330 @@
+// RAST Schooling System — Prisma schema
+// Run: npx prisma migrate dev --name init  (from /database)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../backend/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  THERAPIST
+  PARENT
+  ADMIN
+}
+
+enum Department {
+  BEHAVIOR
+  OCCUPATIONAL
+  SPEECH
+  REMEDIAL
+  ADL
+}
+
+enum Shift {
+  MORNING
+  AFTERNOON
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum GoalType {
+  SHORT_TERM
+  LONG_TERM
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  ACHIEVED
+  ON_HOLD
+}
+
+enum DocumentVisibility {
+  INTERNAL
+  THERAPIST_ONLY
+  PARENT
+  STUDENT
+  ADMIN
+}
+
+enum ReportStatus {
+  DRAFT
+  FINAL
+  SHARED_PARENT
+  SHARED_STUDENT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  parentProfile    Parent?
+  therapistProfile Therapist?
+  studentProfile   Student?
+
+  notifications Notification[]
+  auditLogs     AuditLog[]
+}
+
+model Student {
+  id             String   @id @default(cuid())
+  studentCode    String   @unique // e.g. 23/24-01
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id])
+  name           String
+  fatherName     String?
+  dateOfBirth    DateTime
+  gender         String
+  program        String
+  className      String?
+  shift          Shift
+  enrollmentDate DateTime
+  status         String   @default("active")
+  diagnosis      String?
+  allergies      String?
+  medication     String?
+  emergencyContact String?
+  photoUrl       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  parents          StudentParent[]
+  therapists       StudentTherapist[]
+  caseHistory      CaseHistory[]
+  assessments      Assessment[]
+  therapySessions  TherapySession[]
+  dailyReports     DailyReport[]
+  goals            Goal[]
+  progressReports  ProgressReport[]
+  meetings         Meeting[]
+  attendance       Attendance[]
+  documents        Document[]
+}
+
+model Parent {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  contactInformation  String?
+  createdAt           DateTime @default(now())
+
+  students StudentParent[]
+}
+
+model StudentParent {
+  studentId    String
+  parentId     String
+  relationship String // mother, father, guardian
+  student      Student @relation(fields: [studentId], references: [id])
+  parent       Parent  @relation(fields: [parentId], references: [id])
+
+  @@id([studentId, parentId])
+}
+
+model Therapist {
+  id         String     @id @default(cuid())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  department Department
+  title      String?    // e.g. "Behavior Therapist", "Administrator"
+  createdAt  DateTime   @default(now())
+
+  students        StudentTherapist[]
+  assessments     Assessment[]
+  therapySessions TherapySession[]
+  dailyReports    DailyReport[]
+  goals           Goal[]
+}
+
+model StudentTherapist {
+  studentId   String
+  therapistId String
+  department  Department
+  assignedAt  DateTime   @default(now())
+  student     Student    @relation(fields: [studentId], references: [id])
+  therapist   Therapist  @relation(fields: [therapistId], references: [id])
+
+  @@id([studentId, therapistId, department])
+}
+
+model CaseHistory {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id])
+  category   String   // family_information, medical_history, developmental_history, etc.
+  data       Json     // structured fields for that category
+  createdBy  String
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
+
+model Assessment {
+  id           String    @id @default(cuid())
+  studentId    String
+  student      Student   @relation(fields: [studentId], references: [id])
+  therapistId  String
+  therapist    Therapist @relation(fields: [therapistId], references: [id])
+  department   Department
+  date         DateTime
+  type         String    // e.g. "Informal Assessment Checklist"
+  items        AssessmentItem[]
+  createdAt    DateTime  @default(now())
+}
+
+model AssessmentItem {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  category     String     // Communication, Behavior, Occupational Therapy, Academic/Remedial
+  skill        String
+  rating       String     // Independent / Emerging / Developing / Not Attempted, etc.
+  notes        String?
+}
+
+model TherapySession {
+  id          String        @id @default(cuid())
+  studentId   String
+  student     Student       @relation(fields: [studentId], references: [id])
+  therapistId String
+  therapist   Therapist     @relation(fields: [therapistId], references: [id])
+  department  Department
+  date        DateTime
+  startTime   String
+  endTime     String
+  status      SessionStatus @default(SCHEDULED)
+  createdAt   DateTime      @default(now())
+
+  dailyReport DailyReport?
+}
+
+model DailyReport {
+  id          String         @id @default(cuid())
+  sessionId   String?        @unique
+  session     TherapySession? @relation(fields: [sessionId], references: [id])
+  reportType  Department     // which template was used
+  studentId   String
+  student     Student        @relation(fields: [studentId], references: [id])
+  therapistId String
+  therapist   Therapist      @relation(fields: [therapistId], references: [id])
+  date        DateTime
+  data        Json           // structured template fields (see docs/report-templates.md)
+  notes       String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  studentId   String
+  student     Student    @relation(fields: [studentId], references: [id])
+  therapistId String
+  therapist   Therapist  @relation(fields: [therapistId], references: [id])
+  department  Department
+  title       String
+  description String?
+  goalType    GoalType
+  status      GoalStatus @default(IN_PROGRESS)
+  progress    Int        @default(0) // 0-100
+  startDate   DateTime   @default(now())
+  targetDate  DateTime?
+  notes       String?
+  updatedAt   DateTime   @updatedAt
+}
+
+model ProgressReport {
+  id        String       @id @default(cuid())
+  studentId String
+  student   Student      @relation(fields: [studentId], references: [id])
+  date      DateTime     @default(now())
+  createdBy String
+  status    ReportStatus @default(DRAFT)
+  content   Json         // generated sections: behavior, ot, speech, remedial, observations, recommendations
+  createdAt DateTime     @default(now())
+}
+
+model Meeting {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id])
+  date          DateTime
+  parents       String?
+  teacher       String?
+  therapists    String?
+  purpose       String?
+  discussion    String?
+  parentConcerns String?
+  decisions     String?
+  actionItems   String?
+  followUpDate  DateTime?
+  notes         String?
+  createdBy     String
+  createdAt     DateTime @default(now())
+}
+
+model Attendance {
+  id         String            @id @default(cuid())
+  studentId  String
+  student    Student           @relation(fields: [studentId], references: [id])
+  date       DateTime
+  status     AttendanceStatus
+  department Department?
+  createdAt  DateTime          @default(now())
+
+  @@unique([studentId, date, department])
+}
+
+model Document {
+  id           String             @id @default(cuid())
+  studentId    String
+  student      Student            @relation(fields: [studentId], references: [id])
+  uploadedBy   String
+  documentType String
+  filePath     String
+  visibility   DocumentVisibility @default(INTERNAL)
+  createdAt    DateTime           @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String   // e.g. "updated_daily_report"
+  entity    String   // e.g. "DailyReport"
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+}
