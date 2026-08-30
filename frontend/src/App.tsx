@@ -166,6 +166,89 @@ const DEPT_COLOR = {
   Remedial: T.sage,
 };
 
+/* Daily Report Forms Configuration */
+const DAILY_REPORT_FORMS = {
+  ADL: {
+    title: "ADL - Daily Coverage Report",
+    icon: "👤",
+    fields: [
+      { name: "studentName", label: "Student's Name", type: "select", required: true },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "activityConducted", label: "Activity conducted with the student?", type: "textarea", required: true },
+      { name: "listensRepeat", label: "Listens and repeat?", type: "yesno", required: true },
+      { name: "listenFollowDirections", label: "Listen and follow directions?", type: "yesno", required: true },
+      { name: "sittingTolerance", label: "Sitting Tolerance? (In Minutes)", type: "number", required: true },
+      { name: "enjoyedGroupActivities", label: "Enjoyed group activities and make new friends?", type: "yesno", required: true },
+      { name: "activityConductedByStudent", label: "Was the activity conducted by the students?", type: "select", options: ["Fully Independent", "Partially Independent"], required: true },
+      { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
+    ]
+  },
+  "Behaviour Therapy": {
+    title: "Behaviour Therapy - Daily Coverage Report",
+    icon: "🧠",
+    fields: [
+      { name: "studentName", label: "Student's Name", type: "select", required: true },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "activityConducted", label: "Activity conducted with the student?", type: "textarea", required: true },
+      { name: "strategiesUsed", label: "Strategy used to conduct the activity?", type: "textarea", required: true },
+      { name: "frequencyOfBehaviour", label: "Frequency of behaviour? (In Minutes)", type: "number", required: true },
+      { name: "materialsUsed", label: "Material used during the session?", type: "multiselect", options: ["Slime", "Playdough", "Shaving foam", "Bubble balls", "Beads and threads", "Stress balls", "Pop it", "Worksheets", "Flashcards", "Puzzles", "Ice cream sticks", "Straws", "Rice and beans", "Salt", "Handmade material"], required: false },
+      { name: "sittingTolerance", label: "Sitting Tolerance? (In Minutes)", type: "number", required: true },
+      { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
+    ]
+  },
+  "Occupational Therapy": {
+    title: "Occupational Therapy - Daily Coverage Report",
+    icon: "🤚",
+    fields: [
+      { name: "studentName", label: "Student's Name", type: "select", required: true },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "activityConducted", label: "Activity conducted with the student?", type: "textarea", required: true },
+      { name: "strategiesUsed", label: "Strategy used to conduct the activity?", type: "textarea", required: true },
+      { name: "listenFollowDirections", label: "Listen and follow directions?", type: "yesno", required: true },
+      { name: "materialsUsed", label: "Material used during the session?", type: "multiselect", options: ["Lotion", "Slime", "Playdough", "Shaving foam", "Beads and threads", "Flashcards", "Ice cream sticks", "Sensory playmat", "Gymballs", "Trampoline", "Salt", "Handmade material", "Sensory path"], required: false },
+      { name: "attentionSpan", label: "Attention span? (In Minutes)", type: "number", required: true },
+      { name: "sittingTolerance", label: "Sitting Tolerance? (In Minutes)", type: "number", required: true },
+      { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
+    ]
+  },
+  "Remedial Therapy": {
+    title: "Remedial Therapy - Daily Coverage Report",
+    icon: "📝",
+    fields: [
+      { name: "studentName", label: "Student's Name", type: "select", required: true },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "activityConducted", label: "Activity conducted with the student?", type: "textarea", required: true },
+      { name: "strategiesUsed", label: "Strategy used to conduct the activity?", type: "textarea", required: true },
+      { name: "listensRepeat", label: "Listens and repeat?", type: "yesno", required: true },
+      { name: "listenFollowDirections", label: "Listen and follow directions?", type: "yesno", required: true },
+      { name: "materialsUsed", label: "Material used during the session?", type: "multiselect", options: ["Slime", "Playdough", "Beads and threads", "Pop it", "Paints", "Colours", "Worksheets", "Flashcards", "Puzzles", "Ice cream sticks", "Rice and beans", "Salt", "Handmade material", "Storybooks"], required: false },
+      { name: "sittingTolerance", label: "Sitting Tolerance? (In Minutes)", type: "number", required: true },
+      { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
+    ]
+  },
+  "Speech Therapy": {
+    title: "Speech Therapy - Daily Coverage Report",
+    icon: "🗣️",
+    fields: [
+      { name: "studentName", label: "Student's Name", type: "select", required: true },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "activityConducted", label: "Activity conducted with the student?", type: "textarea", required: true },
+      { name: "strategiesUsed", label: "Strategy used to conduct the activity?", type: "textarea", required: true },
+      { name: "listensRepeat", label: "Listens and repeat?", type: "yesno", required: true },
+      { name: "listenFollowDirections", label: "Listen and follow directions?", type: "yesno", required: true },
+      { name: "materialsUsed", label: "Material used during the session?", type: "multiselect", options: ["Honey", "Lotion", "Slime", "Playdough", "Bubble balls", "Beads and threads", "Flashcards", "Ice cream sticks", "Straws", "Musical toys", "Rice and beans", "Hand made material", "Storybooks"], required: false },
+      { name: "sittingTolerance", label: "Sitting Tolerance? (In Minutes)", type: "number", required: true },
+      { name: "remarks", label: "Any Other Remarks?", type: "textarea", required: false },
+    ]
+  }
+};
+
 /* ---------------------------------------------------------
    SMALL UI PRIMITIVES
 --------------------------------------------------------- */
@@ -325,127 +408,189 @@ const RoleSelect = ({ onSelect }) => {
 };
 
 /* ---------------------------------------------------------
-   DAILY REPORT — MULTI-STEP FORM (Behavior Therapy example)
+   DAILY REPORT — MULTI-FORM WITH DYNAMIC FIELDS
 --------------------------------------------------------- */
-const DailyReportForm = ({ student, onClose }) => {
-  const steps = ["Session info", "Focus areas", "Ratings", "Observations", "Recommendations"];
-  const [step, setStep] = useState(0);
+const DailyReportForm = ({ student, onClose, preSelectedReportType = null }) => {
+  const [selectedStudent, setSelectedStudent] = useState(student?.id || null);
+  const [selectedReportType, setSelectedReportType] = useState(preSelectedReportType || "Behaviour Therapy");
+  const [form, setForm] = useState({});
   const [saved, setSaved] = useState(false);
-  const [form, setForm] = useState({
-    duration: "45", focus: "Attention & command following",
-    attention: 3, eyeContact: 3, compliance: 3, sitting: 3,
-    observations: "", prompts: "Verbal + gestural", recommendations: "",
-  });
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
-  const RatingRow = ({ label, field }) => (
-    <div style={{ marginBottom: 16 }}>
-      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{label}</div>
-      <div style={{ display: "flex", gap: 6 }}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} onClick={() => set(field, n)} style={{
-            width: 34, height: 34, borderRadius: 8, cursor: "pointer",
-            border: `1px solid ${form[field] === n ? T.teal : T.line}`,
-            background: form[field] === n ? T.teal : "white",
-            color: form[field] === n ? "white" : T.inkSoft, fontWeight: 600, fontSize: 13,
-          }}>{n}</button>
-        ))}
-      </div>
-    </div>
-  );
+  const reportConfig = DAILY_REPORT_FORMS[selectedReportType];
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const studentObj = STUDENTS.find((s) => s.id === selectedStudent);
+  const isStudentReadOnly = student !== null; // If opened from student profile, make student readonly
+
+  const renderField = (field) => {
+    const value = form[field.name] || "";
+    const baseStyle = { width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, fontFamily: "inherit" };
+
+    if (field.type === "select") {
+      if (field.name === "studentName") {
+        return (
+          <select 
+            value={value} 
+            onChange={(e) => set(field.name, e.target.value)}
+            disabled={isStudentReadOnly}
+            style={{ ...baseStyle, opacity: isStudentReadOnly ? 0.7 : 1, cursor: isStudentReadOnly ? "not-allowed" : "pointer" }}
+          >
+            <option value="">Select student</option>
+            {STUDENTS.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        );
+      }
+      return (
+        <select value={value} onChange={(e) => set(field.name, e.target.value)} style={{ ...baseStyle, cursor: "pointer" }}>
+          <option value="">{field.label}</option>
+          {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+        </select>
+      );
+    }
+
+    if (field.type === "yesno") {
+      return (
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => set(field.name, "Yes")} style={{
+            flex: 1, padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+            border: `1px solid ${value === "Yes" ? T.teal : T.line}`,
+            background: value === "Yes" ? T.teal : "white",
+            color: value === "Yes" ? "white" : T.ink, fontWeight: 600, fontSize: 12
+          }}>Yes</button>
+          <button onClick={() => set(field.name, "No")} style={{
+            flex: 1, padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+            border: `1px solid ${value === "No" ? T.teal : T.line}`,
+            background: value === "No" ? T.teal : "white",
+            color: value === "No" ? "white" : T.ink, fontWeight: 600, fontSize: 12
+          }}>No</button>
+        </div>
+      );
+    }
+
+    if (field.type === "multiselect") {
+      const selected = Array.isArray(value) ? value : [];
+      return (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {field.options?.map((opt) => (
+            <button key={opt} onClick={() => {
+              const updated = selected.includes(opt) 
+                ? selected.filter((i) => i !== opt)
+                : [...selected, opt];
+              set(field.name, updated);
+            }} style={{
+              padding: "6px 12px", borderRadius: 6, cursor: "pointer", fontSize: 12,
+              border: `1px solid ${selected.includes(opt) ? T.teal : T.line}`,
+              background: selected.includes(opt) ? T.teal : "white",
+              color: selected.includes(opt) ? "white" : T.ink, fontWeight: 500
+            }}>{opt}</button>
+          ))}
+        </div>
+      );
+    }
+
+    if (field.type === "date") {
+      return <input type="date" value={value} onChange={(e) => set(field.name, e.target.value)} style={baseStyle} />;
+    }
+
+    if (field.type === "time") {
+      return <input type="time" value={value} onChange={(e) => set(field.name, e.target.value)} style={baseStyle} />;
+    }
+
+    if (field.type === "number") {
+      return <input type="number" value={value} onChange={(e) => set(field.name, e.target.value)} placeholder={field.label} style={baseStyle} />;
+    }
+
+    if (field.type === "textarea") {
+      return <textarea value={value} onChange={(e) => set(field.name, e.target.value)} placeholder={field.label} rows={3} style={{ ...baseStyle, resize: "vertical" }} />;
+    }
+
+    return <input type="text" value={value} onChange={(e) => set(field.name, e.target.value)} placeholder={field.label} style={baseStyle} />;
+  };
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(21,36,32,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
-      <div className="rast-card rast-fade-in" style={{ width: 560, maxHeight: "88vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="rast-card rast-fade-in" style={{ width: 620, maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Header */}
         <div style={{ padding: "18px 22px", borderBottom: `1px solid ${T.line}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: T.coral, textTransform: "uppercase", letterSpacing: 0.5 }}>Behavior therapy · daily coverage report</div>
-            <div className="rast-serif" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>{student.name}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.coral, textTransform: "uppercase", letterSpacing: 0.5 }}>Daily Coverage Report</div>
+            <div className="rast-serif" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>
+              {studentObj ? studentObj.name : "Select Student"}
+            </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: T.inkFaint }}><X size={20} /></button>
         </div>
 
-        <div style={{ display: "flex", gap: 4, padding: "12px 22px 0", borderBottom: `1px solid ${T.line}`, overflowX: "auto" }} className="rast-scroll">
-          {steps.map((s, i) => (
-            <div key={s} className="rast-tab" style={{
-              padding: "0 4px 12px", fontSize: 12.5, fontWeight: 600,
-              color: i === step ? T.teal : i < step ? T.sage : T.inkFaint,
-              borderBottom: `2px solid ${i === step ? T.teal : "transparent"}`,
-              display: "flex", alignItems: "center", gap: 5,
-            }}>
-              {i < step ? <CheckCircle2 size={13} /> : <Circle size={13} />} {s}
-            </div>
-          ))}
-        </div>
-
+        {/* Content */}
         <div className="rast-scroll" style={{ padding: 22, overflowY: "auto", flex: 1 }}>
-          {step === 0 && (
-            <div>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Session duration (minutes)</div>
-                <input value={form.duration} onChange={(e) => set("duration", e.target.value)} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}` }} />
+          {/* Student Selector */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Student *</label>
+            <select 
+              value={selectedStudent} 
+              onChange={(e) => setSelectedStudent(e.target.value)}
+              disabled={isStudentReadOnly}
+              style={{ 
+                width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, fontFamily: "inherit",
+                opacity: isStudentReadOnly ? 0.7 : 1, cursor: isStudentReadOnly ? "not-allowed" : "pointer"
+              }}
+            >
+              <option value="">Select a student</option>
+              {STUDENTS.map((s) => <option key={s.id} value={s.id}>{s.name} ({s.studentId})</option>)}
+            </select>
+            {isStudentReadOnly && <div style={{ fontSize: 11, color: T.inkFaint, marginTop: 4 }}>Auto-selected from student profile</div>}
+          </div>
+
+          {/* Report Type Selector */}
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 8 }}>Report Type *</label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+              {Object.keys(DAILY_REPORT_FORMS).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedReportType(type)}
+                  style={{
+                    padding: "10px 12px", borderRadius: 8, border: `2px solid ${selectedReportType === type ? T.teal : T.line}`,
+                    background: selectedReportType === type ? T.tealSoft : "white",
+                    color: selectedReportType === type ? T.teal : T.ink,
+                    cursor: "pointer", fontSize: 12, fontWeight: 600, textAlign: "left",
+                  }}
+                >
+                  {DAILY_REPORT_FORMS[type].icon} {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ height: "1px", background: T.line, marginBottom: 20 }} />
+
+          {/* Form Fields */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {reportConfig.fields.map((field) => (
+              <div key={field.name}>
+                <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>
+                  {field.label}
+                  {field.required && <span style={{ color: T.coral }}> *</span>}
+                </label>
+                {renderField(field)}
               </div>
-              <div style={{ fontSize: 13, color: T.inkFaint }}>Therapist: Marukh · Date: 28 Aug 2026 · Department: Behavior Therapy</div>
-            </div>
-          )}
-          {step === 1 && (
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Focus areas for this session</div>
-              <textarea value={form.focus} onChange={(e) => set("focus", e.target.value)} rows={3} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, resize: "vertical" }} />
-            </div>
-          )}
-          {step === 2 && (
-            <div>
-              <RatingRow label="Attention" field="attention" />
-              <RatingRow label="Eye contact" field="eyeContact" />
-              <RatingRow label="Compliance" field="compliance" />
-              <RatingRow label="Sitting tolerance" field="sitting" />
-              <div style={{ fontSize: 12, color: T.inkFaint }}>1 = needs significant support · 5 = fully independent</div>
-            </div>
-          )}
-          {step === 3 && (
-            <div>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Prompts required</div>
-                <input value={form.prompts} onChange={(e) => set("prompts", e.target.value)} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}` }} />
-              </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Behavior observations</div>
-                <textarea value={form.observations} onChange={(e) => set("observations", e.target.value)} rows={4} placeholder="What did you notice this session?" style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, resize: "vertical" }} />
-              </div>
-            </div>
-          )}
-          {step === 4 && (
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Recommendations for home / next session</div>
-              <textarea value={form.recommendations} onChange={(e) => set("recommendations", e.target.value)} rows={4} placeholder="Continue structured turn-taking games at home..." style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: `1px solid ${T.line}`, resize: "vertical" }} />
-              {saved && (
-                <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 8, color: T.sage, fontSize: 13, fontWeight: 600 }}>
-                  <CheckCircle2 size={16} /> Report saved to Abdul Ahad's therapy timeline.
-                </div>
-              )}
+            ))}
+          </div>
+
+          {saved && (
+            <div style={{ marginTop: 16, padding: 12, background: T.sageSoft, borderRadius: 8, display: "flex", alignItems: "center", gap: 8, color: T.sage, fontSize: 13, fontWeight: 600 }}>
+              <CheckCircle2 size={16} /> Report saved successfully!
             </div>
           )}
         </div>
 
-        <div style={{ padding: "14px 22px", borderTop: `1px solid ${T.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className="rast-btn-ghost" style={{ padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: step === 0 ? "default" : "pointer", opacity: step === 0 ? 0.4 : 1 }}>
-            <ChevronLeft size={14} style={{ verticalAlign: -2, marginRight: 4 }} />Previous
+        {/* Footer */}
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${T.line}`, display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <button onClick={onClose} className="rast-btn-ghost" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            Cancel
           </button>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button className="rast-btn-ghost" style={{ padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-              <Save size={13} style={{ verticalAlign: -2, marginRight: 4 }} />Save draft
-            </button>
-            {step < steps.length - 1 ? (
-              <button onClick={() => setStep((s) => s + 1)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Next<ChevronRight size={14} style={{ verticalAlign: -2, marginLeft: 4 }} />
-              </button>
-            ) : (
-              <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Submit report
-              </button>
-            )}
-          </div>
+          <button onClick={() => setSaved(true)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            <Save size={13} style={{ verticalAlign: -2, marginRight: 4 }} />Submit Report
+          </button>
         </div>
       </div>
     </div>
@@ -645,7 +790,7 @@ const StudentProfile = ({ student, onBack, onOpenReport }) => {
 /* ---------------------------------------------------------
    THERAPIST VIEWS
 --------------------------------------------------------- */
-const TherapistDashboard = ({ onOpenStudent }) => {
+const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab }) => {
   const myStudents = STUDENTS.filter((s) => THERAPISTS[0].students.includes(s.id));
   const today = SESSIONS.filter((s) => s.date === "2026-08-28");
   return (
@@ -702,9 +847,22 @@ const TherapistDashboard = ({ onOpenStudent }) => {
         <div>
           <SectionLabel>Quick actions</SectionLabel>
           <div className="rast-card" style={{ padding: 8, marginBottom: 22 }}>
-            {["Add daily coverage report", "View students", "Record session", "Add assessment", "Add progress note"].map((a, i) => (
-              <div key={a} style={{ padding: "11px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer", borderBottom: i < 4 ? `1px solid ${T.line}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                {a} <ChevronRight size={14} color={T.inkFaint} />
+            {[
+              { label: "Add daily coverage report", action: onShowReport },
+              { label: "View students", action: () => onChangeTab("students") },
+              { label: "Record session", action: null },
+              { label: "Add assessment", action: null },
+              { label: "Add progress note", action: null }
+            ].map((item, i) => (
+              <div 
+                key={item.label} 
+                onClick={item.action}
+                style={{ 
+                  padding: "11px 12px", fontSize: 13, fontWeight: 600, cursor: item.action ? "pointer" : "default", 
+                  borderBottom: i < 4 ? `1px solid ${T.line}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center",
+                  opacity: item.action ? 1 : 0.5
+                }}>
+                {item.label} <ChevronRight size={14} color={T.inkFaint} />
               </div>
             ))}
           </div>
@@ -1041,7 +1199,7 @@ export default function RastApp() {
       return <StudentProfile student={openStudent} onBack={() => setOpenStudent(null)} onOpenReport={() => setShowReport(true)} />;
     }
     if (role === "therapist") {
-      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} />;
+      if (tab === "dashboard") return <TherapistDashboard onOpenStudent={setOpenStudent} onShowReport={() => setShowReport(true)} onChangeTab={setTab} />;
       if (tab === "students") return <TherapistStudents onOpenStudent={setOpenStudent} />;
       if (tab === "goals") return (
         <div className="rast-fade-in">
@@ -1124,7 +1282,7 @@ export default function RastApp() {
   };
 
   return (
-    <div className="rast-root" style={{ display: "flex", minHeight: 640, maxWidth: 1180, margin: "0 auto", border: `1px solid ${T.line}`, borderRadius: 16, overflow: "hidden" }}>
+    <div className="rast-root" style={{ display: "flex", minHeight: 640, maxWidth: 1400, margin: "0 auto", border: `1px solid ${T.line}`, borderRadius: 16, overflow: "hidden" }}>
       <GlobalStyle />
 
       {/* Sidebar */}
@@ -1183,7 +1341,7 @@ export default function RastApp() {
         </div>
       </div>
 
-      {showReport && openStudent && (
+      {showReport && (
         <DailyReportForm student={openStudent} onClose={() => setShowReport(false)} />
       )}
     </div>
