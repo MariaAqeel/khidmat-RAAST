@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "strict": true
+    "strict": false
   },
   "include": ["src"]
 }

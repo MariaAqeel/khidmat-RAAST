@@ -11,6 +11,7 @@ import { goalsRouter } from "./routes/goals.routes";
 import { meetingsRouter } from "./routes/meetings.routes";
 import { attendanceRouter } from "./routes/attendance.routes";
 import { notificationsRouter } from "./routes/notifications.routes";
+import { caseHistoryRouter } from "./routes/case-history.routes";
 
 export const app = express();
 
@@ -29,6 +30,7 @@ app.use("/goals", goalsRouter);
 app.use("/meetings", meetingsRouter);
 app.use("/attendance", attendanceRouter);
 app.use("/notifications", notificationsRouter);
+app.use("/case-history", caseHistoryRouter);
 
 // Centralized error handler — never leak stack traces to the client.
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

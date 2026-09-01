@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../../backend/node_modules/.prisma/client"
 }
 
 datasource db {
@@ -280,6 +281,7 @@ model Meeting {
   actionItems   String?
   followUpDate  DateTime?
   notes         String?
+  data          Json?
   createdBy     String
   createdAt     DateTime @default(now())
 }

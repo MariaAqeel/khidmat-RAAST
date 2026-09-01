@@ -91,7 +91,34 @@ studentsRouter.get("/:studentId/therapy", requireAssignedStudent, async (req, re
 
 // POST /students — admin only
 studentsRouter.post("/", requireRole("ADMIN"), async (req, res) => {
-  const student = await prisma.student.create({ data: req.body });
+  const { shift, ...studentData } = req.body ?? {};
+  const student = await prisma.student.create({
+    data: {
+      ...studentData,
+      dateOfBirth: new Date(studentData.dateOfBirth),
+      enrollmentDate: new Date(studentData.enrollmentDate ?? new Date()),
+      shift,
+    },
+  });
+  const therapist = await prisma.therapist.findFirst({ orderBy: { createdAt: "asc" } });
+  if (therapist) {
+    await prisma.studentTherapist.create({
+      data: { studentId: student.id, therapistId: therapist.id, department: therapist.department },
+    });
+    await prisma.notification.create({
+      data: {
+        userId: therapist.userId,
+        title: "Informal assessment required",
+        message: `${student.name} was enrolled and needs an Informal Assessment Checklist.`,
+      },
+    });
+  }
+  const parent = await prisma.parent.findFirst({ orderBy: { createdAt: "asc" } });
+  if (parent) {
+    await prisma.studentParent.create({
+      data: { studentId: student.id, parentId: parent.id, relationship: "guardian" },
+    });
+  }
   await logAction(req.user!.id, "created_student", "Student", student.id);
   res.status(201).json(student);
 });

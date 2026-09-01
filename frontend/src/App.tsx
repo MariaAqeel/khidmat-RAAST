@@ -6,6 +6,7 @@ import {
   MessageCircle, FolderOpen, BarChart3, Sparkles, ArrowLeft,
   AlertCircle, CheckCircle2, Circle, TrendingUp, Save, ChevronLeft,
 } from "lucide-react";
+import { api } from "./lib/api";
 
 /* ---------------------------------------------------------
    DESIGN TOKENS
@@ -59,7 +60,7 @@ const GlobalStyle = () => (
 /* ---------------------------------------------------------
    MOCK DATA — seeded from the uploaded roster / daily log
 --------------------------------------------------------- */
-const THERAPISTS = [
+let THERAPISTS = [
   { id: "t1", name: "Marukh", dept: "Behavior", role: "Behavior Therapist", students: ["s1", "s2", "s5"] },
   { id: "t2", name: "Dr. Atiya", dept: "Occupational", role: "Occupational Therapist", students: ["s1", "s3"] },
   { id: "t3", name: "Ayesha Imran", dept: "Speech", role: "Speech Therapist", students: ["s1", "s4"] },
@@ -143,7 +144,7 @@ const MEETINGS = [
 ];
 
 // Track which students have had Informal Assessment Checklist completed (student ID → true/false)
-let ASSESSMENT_STATUS = {
+let ASSESSMENT_STATUS: Record<string, boolean> = {
   s1: true,  // Abdul Ahad - completed
   s2: false, // Mohsin Ali Khan - pending
   s3: false, // Hamdan Ahmed - pending
@@ -426,7 +427,7 @@ const GrowthRings = ({ progress, size = 180 }) => {
   );
 };
 
-const EmptyState = ({ icon: Icon, title, body, actionLabel, onAction }) => (
+const EmptyState = ({ icon: Icon, title, body, actionLabel = undefined, onAction = undefined }) => (
   <div style={{ textAlign: "center", padding: "48px 24px", color: T.inkFaint }}>
     <Icon size={32} style={{ marginBottom: 12, opacity: 0.6 }} />
     <div className="rast-serif" style={{ fontSize: 16, color: T.ink, marginBottom: 4 }}>{title}</div>
@@ -459,6 +460,7 @@ const NAV = {
   ],
   parent: [
     { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "health-history", label: "Health & case history", icon: Stethoscope },
     { id: "schedule", label: "Schedule", icon: Calendar },
     { id: "progress", label: "Progress", icon: TrendingUp },
     { id: "reports", label: "Reports", icon: FileText },
@@ -725,6 +727,19 @@ const StudentProfile = ({ student, onBack, onOpenReport }) => {
   const goals = GOALS.filter((g) => g.studentId === student.id);
   const sessions = SESSIONS.filter((s) => s.studentId === student.id);
 
+  return (
+    <div className="rast-fade-in">
+      <button onClick={onBack} style={{ background: "none", border: "none", color: T.inkFaint, fontSize: 13, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", marginBottom: 16 }}><ArrowLeft size={14} /> All students</button>
+      <div className="rast-card" style={{ padding: 22, marginBottom: 18 }}><div className="rast-serif" style={{ fontSize: 21, fontWeight: 600 }}>{student.name}</div><div style={{ fontSize: 13, color: T.inkFaint, marginTop: 4 }}>{student.studentId} · Age {student.age} · {student.program} · {student.shift} shift</div><button onClick={onOpenReport} className="rast-btn-primary" style={{ marginTop: 14, padding: "9px 14px", borderRadius: 8 }}><Plus size={14} /> Add daily report</button></div>
+      <div style={{ display: "flex", gap: 18, borderBottom: `1px solid ${T.line}`, marginBottom: 20, overflowX: "auto" }} className="rast-scroll">{tabs.map((tabName) => <button key={tabName} onClick={() => setTab(tabName)} className="rast-tab" style={{ background: "none", border: "none", padding: "0 2px 12px", fontSize: 13.5, fontWeight: 600, cursor: "pointer", color: tab === tabName ? T.teal : T.inkFaint, borderBottom: `2px solid ${tab === tabName ? T.teal : "transparent"}` }}>{tabName}</button>)}</div>
+      {tab === "Overview" && <div className="rast-card" style={{ padding: 20 }}><SectionLabel>Health summary</SectionLabel><div style={{ fontSize: 13, lineHeight: 1.8 }}><div><strong>Diagnosis:</strong> {student.diagnosis || "Not recorded"}</div><div><strong>Allergies:</strong> {student.allergies || "Not recorded"}</div><div><strong>Emergency contact:</strong> {student.emergencyContact || "Not recorded"}</div></div></div>}
+      {tab === "Case history" && <div className="rast-card" style={{ padding: 20 }}><EmptyState icon={FolderOpen} title="Case history" body="Health and family history records are stored securely in the database." /></div>}
+      {tab === "Assessments" && <div className="rast-card" style={{ padding: 20 }}><EmptyState icon={ClipboardList} title="Assessments" body="Assessment records will appear here after submission." /></div>}
+      {tab === "Therapy" && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{sessions.length ? sessions.map((session) => <div key={session.id} className="rast-card" style={{ padding: 16 }}>{session.dept} Therapy · {session.date} · {session.status}</div>) : <EmptyState icon={Activity} title="No therapy sessions recorded yet" body="Sessions will appear here once logged." />}</div>}
+      {tab === "Goals" && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{goals.length ? goals.map((goal) => <div key={goal.id} className="rast-card" style={{ padding: 16 }}>{goal.title} · {goal.progress}%</div>) : <EmptyState icon={Target} title="No goals recorded yet" body="Goals will appear here once added." />}</div>}
+      {(tab === "Attendance" || tab === "Reports" || tab === "Meetings") && <EmptyState icon={tab === "Attendance" ? Calendar : tab === "Reports" ? FileText : MessageCircle} title={`No ${tab.toLowerCase()} records yet`} body="Records will appear here once they are saved." />}
+    </div>
+  );
 };
 
 /* ---------------------------------------------------------
@@ -878,7 +893,7 @@ const InformalAssessmentForm = ({ student, onClose, onSubmit }) => {
             {currentSection < sections.length - 1 ? (
               <button onClick={() => setCurrentSection(currentSection + 1)} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Next →</button>
             ) : (
-              <button onClick={() => { onSubmit(selectedStudent); setSaved(true); }} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Submit</button>
+              <button onClick={() => { onSubmit(selectedStudent, form); setSaved(true); }} className="rast-btn-primary" style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Submit</button>
             )}
           </div>
         </div>
@@ -987,10 +1002,9 @@ const AddStudentForm = ({ onClose, onSubmit }) => {
 };
 
 /* ---------------------------------------------------------
-   STUDENT PROFILE (used by therapist + admin views)
-
-  return (
-    <div className="rast-fade-in">
+   LEGACY STUDENT PROFILE MARKUP
+   (retained below only as historical prototype content)
+/*
       <button onClick={onBack} style={{ background: "none", border: "none", color: T.inkFaint, fontSize: 13, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", marginBottom: 16 }}>
         <ArrowLeft size={14} /> All students
       </button>
@@ -1169,6 +1183,8 @@ const AddStudentForm = ({ onClose, onSubmit }) => {
     </div>
   );
 };
+
+*/
 
 /* ---------------------------------------------------------
    THERAPIST VIEWS
@@ -1578,6 +1594,39 @@ const StubPanel = ({ title, icon }) => (
   </div>
 );
 
+const FormModal = ({ title, fields, onClose, onSubmit }) => {
+  const [data, setData] = useState({});
+  const [saving, setSaving] = useState(false);
+  const set = (name, value) => setData((current) => ({ ...current, [name]: value }));
+  const inputStyle = { width: "100%", padding: "9px 12px", border: `1px solid ${T.line}`, borderRadius: 8, fontSize: 13 };
+  const submit = async (event) => { event.preventDefault(); setSaving(true); await onSubmit(data); setSaving(false); };
+  return <div style={{ position: "fixed", inset: 0, zIndex: 60, background: "rgba(21,36,32,.45)", display: "flex", justifyContent: "center", alignItems: "center", padding: 16 }}>
+    <form onSubmit={submit} className="rast-card rast-scroll" style={{ width: 700, maxHeight: "90vh", overflowY: "auto", padding: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}><div className="rast-serif" style={{ fontSize: 21, fontWeight: 600 }}>{title}</div><button type="button" onClick={onClose} style={{ border: 0, background: "none", cursor: "pointer" }}><X size={20} /></button></div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 15 }}>
+        {fields.map((field) => <label key={field.name} style={{ fontSize: 12, fontWeight: 600, gridColumn: field.wide ? "1 / -1" : undefined }}>{field.label}{field.type === "textarea" ? <textarea required={field.required} rows={3} value={data[field.name] || ""} onChange={(e) => set(field.name, e.target.value)} style={{ ...inputStyle, display: "block", marginTop: 6, resize: "vertical" }} /> : field.type === "select" ? <select required={field.required} value={data[field.name] || ""} onChange={(e) => set(field.name, e.target.value)} style={{ ...inputStyle, display: "block", marginTop: 6 }}><option value="">Select...</option>{field.options.map((option) => <option key={option}>{option}</option>)}</select> : <input required={field.required} type={field.type || "text"} value={data[field.name] || ""} onChange={(e) => set(field.name, e.target.value)} style={{ ...inputStyle, display: "block", marginTop: 6 }} />}</label>)}
+      </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 22 }}><button type="button" onClick={onClose} className="rast-btn-ghost" style={{ padding: "9px 15px", borderRadius: 8 }}>Cancel</button><button type="submit" disabled={saving} className="rast-btn-primary" style={{ padding: "9px 15px", borderRadius: 8 }}>{saving ? "Saving..." : "Save form"}</button></div>
+    </form>
+  </div>;
+};
+
+const HEALTH_HISTORY_FIELDS = [
+  { name: "dateOfBirth", label: "Date of birth", type: "date", required: true }, { name: "gender", label: "Gender", type: "select", options: ["Male", "Female"], required: true },
+  { name: "guardian", label: "Parent or guardian name", required: true }, { name: "relationship", label: "Relationship", type: "select", options: ["Biological", "Step Parent", "Adoptive", "Grandparent", "Other"], required: true },
+  { name: "primaryLanguage", label: "Primary language at home", required: true }, { name: "livingWith", label: "Child mainly lives with", type: "select", options: ["Mother", "Father", "Grandparents", "Other"] }, { name: "legalCustody", label: "Legal custody", type: "select", options: ["Mother", "Father", "Grandparents", "Other"] }, { name: "householdMembers", label: "Everyone living in the home", wide: true, type: "textarea" },
+  { name: "pregnancyLength", label: "Length of pregnancy" }, { name: "birthWeight", label: "Birth weight" }, { name: "deliveryHospital", label: "Hospital of delivery" }, { name: "nicU", label: "Spent time in NICU?", type: "select", options: ["Yes", "No"] },
+  { name: "pregnancyComplications", label: "Complications during pregnancy?", type: "select", options: ["Yes", "No"] }, { name: "pregnancyDetails", label: "Pregnancy/delivery details", wide: true, type: "textarea" },
+  { name: "medications", label: "Medications ever taken", wide: true, type: "textarea" }, { name: "fever104", label: "Fever greater than 104?", type: "select", options: ["Yes", "No"] }, { name: "hospitalized", label: "Ever hospitalized?", type: "select", options: ["Yes", "No"] }, { name: "healthConditions", label: "Health conditions", wide: true, type: "textarea" },
+  { name: "fallsBalance", label: "Falls or loses balance?", type: "select", options: ["Yes", "No"] }, { name: "diagnosedCondition", label: "Diagnosed condition?", type: "select", options: ["Yes", "No"] }, { name: "diagnosisDetails", label: "Diagnosis and current condition", wide: true, type: "textarea" },
+  { name: "firstWordAge", label: "Age at first word" }, { name: "walkAloneAge", label: "Age walked alone" }, { name: "communication", label: "Communication", type: "select", options: ["Fluent", "Minimal", "Less communicative", "Not at all"] }, { name: "speechUnderstood", label: "Speech understood by family", type: "select", options: ["Yes", "No", "Sometimes", "Not at all"] }, { name: "speechConcerns", label: "Speech concerns?", type: "select", options: ["Yes", "No"] },
+  { name: "therapies", label: "Therapies received", wide: true, type: "textarea" }, { name: "servicesDetails", label: "Institution and duration", wide: true, type: "textarea" },
+];
+
+const MEETING_FIELDS = [
+  { name: "studentId", label: "Student", type: "select", options: STUDENTS.map((student) => `${student.id}|${student.name}`), required: true }, { name: "date", label: "Date", type: "date", required: true }, { name: "time", label: "Time", type: "time", required: true }, { name: "diagnosis", label: "Diagnosis" }, { name: "therapistName", label: "Therapist name" }, { name: "parentConcerns", label: "Parents' concerns", wide: true, type: "textarea" }, { name: "parentProgress", label: "Parental progress feedback", wide: true, type: "textarea" }, { name: "progressRating", label: "Progress", type: "select", options: ["Excellent", "Good", "Fair", "Unsatisfactory", "Other"] }, { name: "otherProgress", label: "If Other, specify" }, { name: "therapistAdvice", label: "Therapist advice", wide: true, type: "textarea" }, { name: "therapistProgress", label: "Therapist progress feedback", wide: true, type: "textarea" }, { name: "reinforcements", label: "Re-inforcements", type: "textarea" }, { name: "eyeContact", label: "Eye contact", type: "select", options: ["Yes", "No", "Sometimes"] }, { name: "sitting", label: "Sitting", type: "select", options: ["Yes", "No", "Sometimes"] }, { name: "commandFollowing", label: "Command following", type: "select", options: ["Yes", "No", "Sometimes"] },
+];
+
 /* ---------------------------------------------------------
    APP SHELL
 --------------------------------------------------------- */
@@ -1589,29 +1638,66 @@ export default function RastApp() {
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [showAssessmentForm, setShowAssessmentForm] = useState(false);
   const [assessmentStudent, setAssessmentStudent] = useState(null);
+  const [showHealthHistory, setShowHealthHistory] = useState(false);
+  const [showMeetingForm, setShowMeetingForm] = useState(false);
   const [, refreshData] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
 
-  if (!role) return <div className="rast-root"><GlobalStyle /><RoleSelect onSelect={(r) => setRole(r)} /></div>;
+  const selectRole = async (nextRole) => {
+    const credentials = {
+      admin: ["admin@rast.local", "RastDev!2026"], therapist: ["therapist@rast.local", "RastDev!2026"],
+      parent: ["parent@rast.local", "RastDev!2026"], student: ["student@rast.local", "RastDev!2026"],
+    }[nextRole];
+    try {
+      const session = await api.login(credentials[0], credentials[1]);
+      localStorage.setItem("rast_token", session.token);
+      const remoteStudents = await api.getStudents();
+      if (remoteStudents.length) {
+        STUDENTS = remoteStudents.map((student) => ({ ...student, studentId: student.studentCode, father: student.fatherName, dob: student.dateOfBirth?.slice(0, 10), admission: student.enrollmentDate?.slice(0, 10), parent: "", phone: "", photo: student.name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(), departments: [], progress: {} }));
+      }
+      if (nextRole === "therapist") {
+        const pending = await api.getPendingAssessments();
+        ASSESSMENT_STATUS = Object.fromEntries(STUDENTS.map((student) => [student.id, pending.some((item) => item.id === student.id) === false]));
+      }
+      setRole(nextRole);
+    } catch (error) {
+      console.error("Unable to connect to the RAST API", error);
+      setRole(nextRole);
+    }
+  };
+
+  if (!role) return <div className="rast-root"><GlobalStyle /><RoleSelect onSelect={selectRole} /></div>;
 
   const meta = ROLE_META[role];
   const nav = NAV[role];
 
   const goHome = () => { setRole(null); setTab("dashboard"); setOpenStudent(null); };
   const changeTab = (id) => { setTab(id); setOpenStudent(null); setMobileNav(false); };
-  const addStudent = (form) => {
-    const id = `s${STUDENTS.length + 1}`;
+  const addStudent = async (form) => {
+    const savedStudent = await api.createStudent({
+      studentCode: `26/27-${String(STUDENTS.length + 1).padStart(2, "0")}`,
+      name: form.name, fatherName: form.father || null, dateOfBirth: form.dob,
+      gender: form.gender || "Not specified", program: form.program || "School Readiness Program",
+      className: form.className || null, shift: (form.shift || "AFTERNOON").toUpperCase(),
+      enrollmentDate: new Date().toISOString(), diagnosis: form.diagnosis || null,
+      allergies: form.allergies || null, emergencyContact: form.phone || null,
+    });
+    const id = savedStudent.id;
     STUDENTS = [...STUDENTS, {
       ...form, id, studentId: `26/27-${String(STUDENTS.length + 1).padStart(2, "0")}`,
       age: Number(form.age) || 0, status: "Active", admission: new Date().toISOString().slice(0, 10),
       emergencyContact: form.phone, departments: [], progress: {}, photo: form.name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
     }];
+    THERAPISTS = THERAPISTS.map((therapist, index) => index === 0
+      ? { ...therapist, students: [...therapist.students, id] }
+      : therapist);
     ASSESSMENT_STATUS = { ...ASSESSMENT_STATUS, [id]: false };
     refreshData((value) => value + 1);
     setShowAddStudent(false);
   };
-  const completeAssessment = (studentId) => {
+  const completeAssessment = async (studentId, form) => {
     if (!studentId) return;
+    await api.createAssessment({ studentId, department: "BEHAVIOR", date: form.date || new Date().toISOString(), type: "Informal Assessment Checklist", items: Object.entries(form).filter(([key]) => !["studentName", "date", "time"].includes(key)).map(([skill, rating]) => ({ category: "Informal Assessment Checklist", skill, rating: Array.isArray(rating) ? rating.join(", ") : String(rating), notes: null })) });
     ASSESSMENT_STATUS = { ...ASSESSMENT_STATUS, [studentId]: true };
     refreshData((value) => value + 1);
     setShowAssessmentForm(false);
@@ -1667,6 +1753,7 @@ export default function RastApp() {
     }
     if (role === "parent") {
       if (tab === "dashboard") return <ParentDashboard />;
+      if (tab === "health-history") return <div className="rast-fade-in"><div className="rast-serif" style={{ fontSize: 22, fontWeight: 600, marginBottom: 18 }}>Health & case history</div><button onClick={() => setShowHealthHistory(true)} className="rast-btn-primary" style={{ padding: "10px 15px", borderRadius: 8 }}>Fill health and history form</button></div>;
       if (tab === "progress") return (
         <div className="rast-fade-in" style={{ display: "flex", justifyContent: "center" }}>
           <div className="rast-card" style={{ padding: 28, display: "flex", flexDirection: "column", alignItems: "center", maxWidth: 340 }}>
@@ -1684,6 +1771,7 @@ export default function RastApp() {
     if (role === "admin") {
       if (tab === "dashboard") return <AdminDashboard />;
       if (tab === "students") return <AdminStudents onOpenStudent={setOpenStudent} onShowAddStudent={setShowAddStudent} />;
+      if (tab === "meetings") return <div className="rast-fade-in"><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}><div className="rast-serif" style={{ fontSize: 22, fontWeight: 600 }}>Parent / teacher meetings</div><button onClick={() => setShowMeetingForm(true)} className="rast-btn-primary" style={{ padding: "9px 14px", borderRadius: 8 }}><Plus size={14} /> Record minutes</button></div>{MEETINGS.map((meeting) => <div key={meeting.id} className="rast-card" style={{ padding: 16, marginBottom: 10 }}>{meeting.date} · {meeting.purpose || "Parent / teacher meeting"}</div>)}</div>;
       if (tab === "staff") return (
         <div className="rast-fade-in">
           <div className="rast-serif" style={{ fontSize: 22, fontWeight: 600, marginBottom: 18 }}>Therapists & staff</div>
@@ -1775,6 +1863,8 @@ export default function RastApp() {
           {showAssessmentForm && (
             <InformalAssessmentForm student={assessmentStudent} onClose={() => setShowAssessmentForm(false)} onSubmit={completeAssessment} />
           )}
+          {showHealthHistory && <FormModal title="Health & Case History Form" fields={HEALTH_HISTORY_FIELDS} onClose={() => setShowHealthHistory(false)} onSubmit={async (data) => { await api.createHealthHistory(STUDENTS[0].id, data); setShowHealthHistory(false); }} />}
+          {showMeetingForm && <FormModal title="Parent / Teacher Minutes of Meeting" fields={MEETING_FIELDS} onClose={() => setShowMeetingForm(false)} onSubmit={async (data) => { const [studentId] = data.studentId.split("|"); await api.createMeeting({ studentId, date: `${data.date}T${data.time || "00:00"}:00`, parentConcerns: data.parentConcerns, notes: data.therapistAdvice, data }); setShowMeetingForm(false); }} />}
     </div>
   );
 }

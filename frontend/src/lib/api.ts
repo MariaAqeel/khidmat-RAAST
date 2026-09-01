@@ -1,13 +1,14 @@
 /**
- * Thin fetch wrapper for the RAST backend. Vite's dev proxy forwards
- * /api/* to http://localhost:4000/* (see vite.config.ts), so this file
- * never needs a hardcoded host.
- *
- * Swap the mock data in App.tsx for calls to these functions module by
- * module (start with `login`, then `getStudents`) rather than all at once.
+ * Thin fetch wrapper for the RAST backend. 
+ * 
+ * Local dev: Vite's proxy forwards /api/* to http://localhost:4000/*
+ * Production: Uses VITE_API_BASE_URL env variable (set via Vercel/Render)
  */
 
-const BASE = "/api";
+const BASE =
+  import.meta.env.MODE === "production" && import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL
+    : "/api";
 
 function authHeader(): Record<string, string> {
   const token = localStorage.getItem("rast_token");
@@ -40,16 +41,22 @@ export const api = {
     request<LoginResponse>("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
 
   getStudents: () => request<any[]>("/students"),
+  createStudent: (data: any) => request<any>("/students", { method: "POST", body: JSON.stringify(data) }),
+  assignTherapist: (studentId: string, data: any) => request<any>(`/students/${studentId}/assign-therapist`, { method: "POST", body: JSON.stringify(data) }),
   getStudent: (id: string) => request<any>(`/students/${id}`),
   getStudentProgress: (id: string) => request<any>(`/students/${id}/progress`),
   getStudentAssessments: (id: string) => request<any[]>(`/students/${id}/assessments`),
   getStudentTherapy: (id: string) => request<any[]>(`/students/${id}/therapy`),
+  getHealthHistory: (studentId: string) => request<any[]>(`/case-history/${studentId}`),
+  createHealthHistory: (studentId: string, data: any) => request<any>(`/case-history/${studentId}`, { method: "POST", body: JSON.stringify(data) }),
+  updateHealthHistory: (studentId: string, id: string, data: any) => request<any>(`/case-history/${studentId}/${id}`, { method: "PUT", body: JSON.stringify(data) }),
 
   createSession: (data: any) => request<any>("/therapy/sessions", { method: "POST", body: JSON.stringify(data) }),
   createDailyReport: (data: any) => request<any>("/therapy/reports", { method: "POST", body: JSON.stringify(data) }),
   updateDailyReport: (id: string, data: any) => request<any>(`/therapy/reports/${id}`, { method: "PUT", body: JSON.stringify(data) }),
 
   createAssessment: (data: any) => request<any>("/assessments", { method: "POST", body: JSON.stringify(data) }),
+  getPendingAssessments: () => request<any[]>("/assessments/pending"),
   createGoal: (data: any) => request<any>("/goals", { method: "POST", body: JSON.stringify(data) }),
   updateGoal: (id: string, data: any) => request<any>(`/goals/${id}`, { method: "PUT", body: JSON.stringify(data) }),
 

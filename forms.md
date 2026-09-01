@@ -1,5 +1,4 @@
-Speech Therapy - Daily Coverage Report 
- Use this form to document daily speech therapy sessions, including student details, goals addressed, activities conducted, progress notes, and therapist observations.  
+Parent/Teacher Minutes of Meeting
 rafaayaadnan@gmail.com Switch account
  
 Not shared
@@ -9,154 +8,147 @@ Time?
 Date
 Time
 :
-Activity conducted with the student?
-Strategy used to conduct the acitivity?
-Listens and repeat?
-Yes
-No
-Listen and follow directions?
-Yes
-No
-Material used during the session?
-Honey
-Lotion
-Slime
-Playdough
-Bubble balls
-Beads and threads
-Flashcards
-Ice cream sticks
-Straws
-Musical toys
-Rice and beans
-Hand made material
-Storybooks
-Sitting Tolerance?  (In Minutes) 
-Any Other Remarks? 
-//////
-Remedial Therapy - Daily Coverage Report 
+Diagnosis?
+Therapist Name?
+Parents Concerns?
+Parental Progress Feedback?
+Excellent
+Good
+Fair
+UnSatisfactory
+If selected Other, Then Specify?
+Therapist Advice?
+Therapist Progress Feedback?
+Re-Inforcements?
+Eye-Contact?
+Sitting?
+Command Following?///////////////
+Health & Case History Form
+The Health & Case History Form is a vital document designed to gather comprehensive medical and health-related information for students enrolling in the RAST School Readiness Program's Special Needs Program – Afternoon Shift. This form ensures that the program team can provide a safe, supportive, and personalized educational environment tailored to each student’s unique needs.  
 rafaayaadnan@gmail.com Switch account
  
 Not shared
  
 Student's Name?
-Time? 
+Date of Birth? 
 Date
-Time
-:
-Activity conducted with the student?
-Strategy used to conduct the acitivity?
-Listens and repeat?
+Gender?
+Male
+Female
+Parent or Guardian's Name?
+Relationship with the child?
+Biological
+Step Parent
+Adoptive
+Grandparent
+Other:
+Primary language spoken at home and around your child?
+If parents are living apart, child is mainly living with?
+Mother
+Father
+Grandparents
+Other:
+Who has the legal custody of the child?
+Mother
+Father
+Grandparents
+Other:
+List everyone who lives in the home with the child?
+Parental & Delivery History
+
+Length of pregnancy?
+Birth Weight?
+Complications during pregnancy?
 Yes
 No
-Listen and follow directions?
+If Yes, then describe? 
+Hospital name of the delivery?
+Did you chiuld spend anytime in the NICU?
 Yes
 No
-Material used during the session?
-Slime
-Playdough
-Beads and threads
-Pop it
-Paints
-Colours
-Worksheets
-Flashcards
-Puzzles
-Ice cream sticks
-Rice and beans
-Salt
-Handmade material
-Storybooks
-Sitting Tolerance?  (In Minutes) 
-Any Other Remarks? 
-////
-Occupational Therapy - Daily Coverage Report 
-rafaayaadnan@gmail.com Switch account
- 
-Not shared
- 
-Student's Name?
-Time? 
-Date
-Time
-:
-Activity conducted with the student?
-Strategy used to conduct the acitivity?
-Listen and follow directions?
+Was your pregnancy normal? If No, then describe?
+Health History
+
+Has your child ever taken any of the following medications?
+Vancomycln
+Chemotherapy
+Gentamycln
+Streptomycln
+Other:
+Has your child ever had a fever greater than 104?
 Yes
 No
-Material used during the session?
-Lotion
-Slime
-Playdough
-Shaving foam
-Beads and threads
-Flashcards
-Icecream sticks
-Sensory playmat
-Gymballs
-Trampoline
-Salt
-Handmade material
-Sensory path
-Attention span? (In Minutues) 
-Sitting Tolerance?  (In Minutes) 
-Any Other Remarks? 
-/////
-Behaviour Therapy - Daily Coverage Report 
-rafaayaadnan@gmail.com Switch account
- 
-Not shared
- 
-Student's Name?
-Time? 
-Date
-Time
-:
-Activity conducted with the student?
-Strategy used to conduct the acitivity?
-Frequency of behaviour?  (In Minutes) 
-Material used during the session?
-Slime
-Playdough
-Shaving foam
-Bubble balls
-Beads and threads
-Stress balls
-Pop it
-Worksheets
-Flashcards
-Puzzles
-Ice cream sticks
-Straws
-Rice and beans
-Salt
-handmade material
-Sitting Tolerance?  (In Minutes) 
-Any Other Remarks? 
-/////
-ADL - Daily Coverage Report 
-rafaayaadnan@gmail.com Switch account
- 
-Not shared
- 
-Student's Name?
-Time? 
-Date
-Time
-:
-Activity conducted with the student?
-Listens and repeat?
+If, Yes how old was your child? How long did it last?
+Has your child ever been hospitalized?
 Yes
 No
-Listen and follow directions?
+Has your child had any of the following?
+Select
+Chicken Pox
+Ear Infection/Fluid
+Scarlet Fever
+Measles
+Cytomegalovirus
+Head Injury
+Draining Ear
+Breathing Difficulty 
+Chicken Pox
+Ear Infection/Fluid
+Scarlet Fever
+Measles
+Cytomegalovirus
+Head Injury
+Draining Ear
+Breathing Difficulty 
+Does your child fall or loss balance easily?
 Yes
 No
-Sitting Tolerance?  (In Minutes) 
-Enjoyed group activites and make new friends?
+Has your child been diagnosed with any specific condition?
 Yes
 No
-Was the acitivity conducted by the students?
-Fully Independent
-Partially Independent
-Any Other Remarks
+If yes, please specify the diagonosis and current condition?
+Development Milestone
+
+At what age did your child:
+
+Say their first word?
+Years
+1
+2
+3
+4
+5
+6
+Years
+Walk alone?
+Years
+1
+2
+3
+4
+5
+Years
+How does your child communicate with others?
+Fluent
+Minimal
+Less communicative
+Not at all
+How much of your child's speech can be understood by the family?
+Yes
+No
+Sometimes
+Not at all
+Do you have any concerns about your child's speech?
+Yes
+No
+School & Other Services 
+
+Please select using the drop down menu the therapies your child has been under-going?
+Speech Therapy
+Behaviour Therapy
+Occupational Therapy
+Remedial Therapy
+Sports Therapy
+Conventional Schooling System
+None of the Above
+If Yes, then name of the institution and duration of the therapy(ies)?
