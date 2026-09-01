@@ -5,10 +5,7 @@
  * Production: Uses VITE_API_BASE_URL env variable (set via Vercel/Render)
  */
 
-const BASE =
-  import.meta.env.MODE === "production" && import.meta.env.VITE_API_BASE_URL
-    ? import.meta.env.VITE_API_BASE_URL
-    : "/api";
+const BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function authHeader(): Record<string, string> {
   const token = localStorage.getItem("rast_token");
