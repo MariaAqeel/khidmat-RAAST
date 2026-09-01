@@ -1,12 +1,10 @@
 /**
- * Thin fetch wrapper for the RAST backend. Vite's dev proxy forwards
- * /api/* to http://localhost:4000/* (see vite.config.ts), so this file
- * never needs a hardcoded host.
+ * Thin fetch wrapper for the RAST backend.
  *
- * Swap the mock data in App.tsx for calls to these functions module by
- * module (start with `login`, then `getStudents`) rather than all at once.
+ * Local dev: Vite's proxy forwards /api/* to http://localhost:4000/*
+ * Production: Uses VITE_API_BASE_URL env variable (set via Vercel/Render)
  */
-const BASE = "/api";
+const BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 function authHeader() {
     const token = localStorage.getItem("rast_token");
     return token ? { Authorization: `Bearer ${token}` } : {};
