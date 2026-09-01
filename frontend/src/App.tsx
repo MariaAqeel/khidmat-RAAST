@@ -1652,8 +1652,21 @@ export default function RastApp() {
       const session = await api.login(credentials[0], credentials[1]);
       localStorage.setItem("rast_token", session.token);
       const remoteStudents = await api.getStudents();
-      if (remoteStudents.length) {
-        STUDENTS = remoteStudents.map((student) => ({ ...student, studentId: student.studentCode, father: student.fatherName, dob: student.dateOfBirth?.slice(0, 10), admission: student.enrollmentDate?.slice(0, 10), parent: "", phone: "", photo: student.name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(), departments: [], progress: {} }));
+      if (remoteStudents && remoteStudents.length) {
+        STUDENTS = remoteStudents
+          .filter((student) => student && student.name) // Filter out null/undefined
+          .map((student) => ({
+            ...student,
+            studentId: student.studentCode || student.id,
+            father: student.fatherName || "",
+            dob: student.dateOfBirth?.slice(0, 10) || "",
+            admission: student.enrollmentDate?.slice(0, 10) || "",
+            parent: "",
+            phone: "",
+            photo: (student.name || "?").split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
+            departments: [],
+            progress: {},
+          }));
       }
       if (nextRole === "therapist") {
         const pending = await api.getPendingAssessments();
@@ -1684,9 +1697,16 @@ export default function RastApp() {
     });
     const id = savedStudent.id;
     STUDENTS = [...STUDENTS, {
-      ...form, id, studentId: `26/27-${String(STUDENTS.length + 1).padStart(2, "0")}`,
-      age: Number(form.age) || 0, status: "Active", admission: new Date().toISOString().slice(0, 10),
-      emergencyContact: form.phone, departments: [], progress: {}, photo: form.name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
+      ...form,
+      id,
+      studentId: `26/27-${String(STUDENTS.length + 1).padStart(2, "0")}`,
+      age: Number(form.age) || 0,
+      status: "Active",
+      admission: new Date().toISOString().slice(0, 10),
+      emergencyContact: form.phone,
+      departments: [],
+      progress: {},
+      photo: (form.name || "?").split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
     }];
     THERAPISTS = THERAPISTS.map((therapist, index) => index === 0
       ? { ...therapist, students: [...therapist.students, id] }
