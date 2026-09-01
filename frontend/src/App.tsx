@@ -1207,7 +1207,7 @@ const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab, onShowAs
               {pendingAssessments.length} student{pendingAssessments.length === 1 ? '' : 's'} need{pendingAssessments.length === 1 ? 's' : ''} Informal Assessment
             </div>
             <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
-              {pendingAssessments.map(s => s.name).join(", ")}
+              {pendingAssessments.map(s => s?.name || "Unknown").join(", ")}
             </div>
           </div>
           <button onClick={() => onShowAssessment(pendingAssessments[0])} className="rast-btn-primary" style={{ padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -1239,12 +1239,13 @@ const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab, onShowAs
           <div className="rast-card" style={{ padding: 0, overflow: "hidden", marginBottom: 22 }}>
             {today.map((s, i) => {
               const student = STUDENTS.find((st) => st.id === s.studentId);
+              if (!student) return null;
               return (
                 <div key={s.id} onClick={() => onOpenStudent(student)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", borderBottom: i < today.length - 1 ? `1px solid ${T.line}` : "none", cursor: "pointer" }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: T.inkFaint, width: 72 }}>{s.time}</div>
-                  <Avatar initials={student.photo} size={34} />
+                  <Avatar initials={student.photo || "??"} size={34} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 600 }}>{student.name}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 600 }}>{student.name || "Unknown"}</div>
                     <div style={{ fontSize: 12, color: T.inkFaint }}>{s.dept} Therapy</div>
                   </div>
                   <ChevronRight size={16} color={T.inkFaint} />
@@ -1302,7 +1303,7 @@ const TherapistDashboard = ({ onOpenStudent, onShowReport, onChangeTab, onShowAs
 const TherapistStudents = ({ onOpenStudent }) => {
   const [q, setQ] = useState("");
   const myStudents = STUDENTS.filter((s) => THERAPISTS[0].students.includes(s.id));
-  const filtered = myStudents.filter((s) => s.name.toLowerCase().includes(q.toLowerCase()));
+  const filtered = myStudents.filter((s) => (s?.name || "").toLowerCase().includes(q.toLowerCase()));
   return (
     <div className="rast-fade-in">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
@@ -1315,12 +1316,12 @@ const TherapistStudents = ({ onOpenStudent }) => {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
         {filtered.map((s) => (
           <div key={s.id} onClick={() => onOpenStudent(s)} className="rast-card" style={{ padding: 16, cursor: "pointer", display: "flex", gap: 12 }}>
-            <Avatar initials={s.photo} size={44} />
+            <Avatar initials={s?.photo || "??"} size={44} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</div>
-              <div style={{ fontSize: 12, color: T.inkFaint, marginBottom: 8 }}>{s.studentId} · Age {s.age} · {s.shift}</div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{s?.name || "Unknown"}</div>
+              <div style={{ fontSize: 12, color: T.inkFaint, marginBottom: 8 }}>{s?.studentId || "N/A"} · Age {s?.age || "?"} · {s?.shift || "?"}</div>
               <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                {s.departments.filter((d) => THERAPISTS[0].dept === d || THERAPISTS.find(t => t.students.includes(s.id) && t.dept === d)).slice(0,1).map((d) => (
+                {(s?.departments || []).filter((d) => THERAPISTS[0].dept === d || THERAPISTS.find(t => t.students.includes(s.id) && t.dept === d)).slice(0,1).map((d) => (
                   <Pill key={d} color={DEPT_COLOR[d]} bg={DEPT_COLOR[d] + "22"}>{d}</Pill>
                 ))}
               </div>
@@ -1336,18 +1337,18 @@ const TherapistStudents = ({ onOpenStudent }) => {
    PARENT VIEWS
 --------------------------------------------------------- */
 const ParentDashboard = () => {
-  const child = STUDENTS[0];
+  const child = STUDENTS[0] || { id: "", name: "Unknown", photo: "??", progress: {}, email: "" };
   const todaySessions = SESSIONS.filter((s) => s.studentId === child.id && s.date === "2026-08-28");
   return (
     <div className="rast-fade-in">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <div className="rast-serif" style={{ fontSize: 24, fontWeight: 600 }}>Good afternoon, Sana</div>
-          <div style={{ fontSize: 13.5, color: T.inkFaint, marginTop: 2 }}>Here's how {child.name} is doing.</div>
+          <div style={{ fontSize: 13.5, color: T.inkFaint, marginTop: 2 }}>Here's how {child?.name || "your child"} is doing.</div>
         </div>
         <div className="rast-card" style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-          <Avatar initials={child.photo} size={28} />
-          <span style={{ fontSize: 13, fontWeight: 600 }}>{child.name}</span>
+          <Avatar initials={child?.photo || "??"} size={28} />
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{child?.name || "Unknown"}</span>
           <ChevronDown size={14} color={T.inkFaint} />
         </div>
       </div>
